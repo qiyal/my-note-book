@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/my_noot_book
+    username: postgres
+    driver-class-name: org.postgresql.Driver
+    password: nur26erb
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+  jpa:
+    hibernate:
+      ddl-auto: update
+server:
+  servlet:
+    context-path: /my_noot_book
