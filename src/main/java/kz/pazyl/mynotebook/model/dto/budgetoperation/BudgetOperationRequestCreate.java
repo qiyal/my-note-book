@@ -11,9 +11,6 @@ import lombok.Setter;
 @Setter
 @Builder
 public class BudgetOperationRequestCreate {
-    @NotNull(message = "Бюджет id таңдалмаған")
-    private Long budgetId;
-
     @NotNull(message = "Валюта id таңдалмаған")
     private Long currencyId;
 

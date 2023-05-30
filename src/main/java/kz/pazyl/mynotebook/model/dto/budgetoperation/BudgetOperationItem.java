@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -34,5 +36,13 @@ public class BudgetOperationItem {
                 .budget(BudgetItem.of(entity.getBudget()))
                 .currency(CurrencyItem.of(entity.getCurrency()))
                 .build();
+    }
+
+    public static List<BudgetOperationItem> listOf(List<BudgetOperationEntity> entityList) {
+        if (entityList == null) return null;
+
+        return entityList.stream()
+                .map(BudgetOperationItem::of)
+                .collect(Collectors.toList());
     }
 }

@@ -14,6 +14,7 @@ import kz.pazyl.mynotebook.repository.BudgetRepository;
 import kz.pazyl.mynotebook.repository.CurrencyRepository;
 import kz.pazyl.mynotebook.service.IBudgetService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -30,6 +31,30 @@ public class BudgetService implements IBudgetService {
     private CurrencyRepository currencyRepository;
     @Autowired
     private BudgetOperationRepository budgetOperationRepository;
+
+    @Override
+    public BudgetItem getById(Long id) {
+        BudgetEntity budget = repository.findById(id)
+                .orElseThrow(() -> new ExceptionNotFound("budget not found"));
+
+        Optional<List<BudgetOperationEntity>> budgetOperationsOptional = Optional.ofNullable(budget.getOperations());
+
+        budgetOperationsOptional
+                .ifPresent(budgetOperations -> {
+                    double currentSum = budgetOperations.stream()
+                            .mapToDouble(budgetOperation ->
+                                    BudgetOperationType.PLUS.equals(budgetOperation.getType())
+                                            ? budgetOperation.getSum()
+                                            : -budgetOperation.getSum()
+                            )
+                            .sum();
+
+                    budget.setCurrentSum(currentSum);
+                    budget.setDonePercent(currentSum * 100 / budget.getSum());
+                });
+
+        return BudgetItem.of(budget);
+    }
 
     @Override
     public BudgetItem create(BudgetRequestCreate request) {
@@ -57,8 +82,8 @@ public class BudgetService implements IBudgetService {
     }
 
     @Override
-    public BudgetOperationItem addOperation(BudgetOperationRequestCreate request) {
-        BudgetEntity budget = repository.findById(request.getBudgetId())
+    public BudgetOperationItem addOperation(Long budgetId, BudgetOperationRequestCreate request) {
+        BudgetEntity budget = repository.findById(budgetId)
                 .orElseThrow(() -> new ExceptionNotFound("Budget табылмады"));
 
         CurrencyEntity currency = currencyRepository.findById(request.getCurrencyId())
@@ -77,26 +102,12 @@ public class BudgetService implements IBudgetService {
     }
 
     @Override
-    public BudgetItem getById(Long id) {
-        BudgetEntity budget = repository.findById(id)
-                .orElseThrow(() -> new ExceptionNotFound("budget not found"));
-
-        Optional<List<BudgetOperationEntity>> budgetOperationsOptional = Optional.ofNullable(budget.getOperations());
-
-        budgetOperationsOptional
-                .ifPresent(budgetOperations -> {
-                    double currentSum = budgetOperations.stream()
-                            .mapToDouble(budgetOperation ->
-                                    BudgetOperationType.PLUS.equals(budgetOperation.getType())
-                                            ? budgetOperation.getSum()
-                                            : -budgetOperation.getSum()
-                            )
-                            .sum();
-
-                    budget.setCurrentSum(currentSum);
-                    budget.setDonePercent(currentSum * 100 / budget.getSum());
-                });
-
-        return BudgetItem.of(budget);
+    public List<BudgetOperationItem> getOperationList(Long budgetId) {
+        return BudgetOperationItem.listOf(
+                budgetOperationRepository.findBudgetOperationEntitiesByBudget_Id(
+                        budgetId,
+                        Sort.by(Sort.Direction.DESC, "createdDate")
+                )
+        );
     }
 }

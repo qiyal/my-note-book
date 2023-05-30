@@ -6,12 +6,15 @@ import kz.pazyl.mynotebook.model.dto.budgetoperation.BudgetOperationItem;
 import kz.pazyl.mynotebook.model.dto.budgetoperation.BudgetOperationRequestCreate;
 import kz.pazyl.mynotebook.model.entity.BudgetEntity;
 
+import java.util.List;
+
 public interface IBudgetService {
 
+    BudgetItem getById(Long id);
     BudgetItem create(BudgetRequestCreate budget);
+
     BudgetEntity save(BudgetEntity budget);
 
-    BudgetOperationItem addOperation(BudgetOperationRequestCreate operation);
-
-    BudgetItem getById(Long id);
+    BudgetOperationItem addOperation(Long budgetId, BudgetOperationRequestCreate operation);
+    List<BudgetOperationItem> getOperationList(Long budgetId);
 }
