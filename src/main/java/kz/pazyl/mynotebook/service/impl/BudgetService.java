@@ -110,4 +110,16 @@ public class BudgetService implements IBudgetService {
                 )
         );
     }
+
+    @Override
+    public Long deleteById(Long budgetId) {
+        repository.deleteById(budgetId);
+        return budgetId;
+    }
+
+    @Override
+    public Long deleteOperationById(Long operationId) {
+        budgetOperationRepository.deleteById(operationId);
+        return operationId;
+    }
 }

@@ -45,7 +45,7 @@ public class BudgetEntity {
     @Temporal(value = TemporalType.TIMESTAMP)
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "budget")
+    @OneToMany(mappedBy = "budget", cascade = {CascadeType.REMOVE})
     private List<BudgetOperationEntity> operations;
 
     @Transient

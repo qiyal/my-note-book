@@ -17,4 +17,8 @@ public interface IBudgetService {
 
     BudgetOperationItem addOperation(Long budgetId, BudgetOperationRequestCreate operation);
     List<BudgetOperationItem> getOperationList(Long budgetId);
+
+    Long deleteById(Long budgetId);
+
+    Long deleteOperationById(Long operationId);
 }

@@ -34,6 +34,13 @@ public class BudgetController {
         return ResponseEntity.ok(iBudgetService.getById(budgetId));
     }
 
+    @DeleteMapping(value = "/{budgetId}", name = "Delete budget by id")
+    public ResponseEntity<Long> deleteBudgetById(
+            @PathVariable(name = "budgetId") @NotNull(message = "id is null") Long budgetId
+    ) {
+        return ResponseEntity.ok(iBudgetService.deleteById(budgetId));
+    }
+
     @PostMapping(value = "/{budgetId}/operation", name = "Create new BudgetOperation")
     public ResponseEntity<BudgetOperationItem> addOperation(
             @PathVariable("budgetId") Long budgetId,
@@ -43,7 +50,14 @@ public class BudgetController {
         return ResponseEntity.ok(iBudgetService.addOperation(budgetId, request));
     }
 
-    @GetMapping(value = "/{budgetId}/operation/list", name = "Get list of BudgetOperation list by budgetId")
+    @DeleteMapping(value = "/operation/{operationId}")
+    public ResponseEntity<Long> deleteOperationById(
+            @PathVariable("operationId") Long operationId
+    ) {
+        return ResponseEntity.ok(iBudgetService.deleteOperationById(operationId));
+    }
+
+    @GetMapping(value = "/{budgetId}/operation/list", name = "Get list of BudgetOperation by budgetId")
     public ResponseEntity<List<BudgetOperationItem>> getOperationList(
             @PathVariable("budgetId") Long budgetId
     ) {
