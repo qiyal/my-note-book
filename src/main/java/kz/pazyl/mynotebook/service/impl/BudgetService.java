@@ -8,7 +8,7 @@ import kz.pazyl.mynotebook.model.entity.BudgetEntity;
 import kz.pazyl.mynotebook.model.entity.BudgetOperationEntity;
 import kz.pazyl.mynotebook.model.entity.CurrencyEntity;
 import kz.pazyl.mynotebook.model.enums.BudgetOperationType;
-import kz.pazyl.mynotebook.model.exception.ExceptionNotFound;
+import kz.pazyl.mynotebook.model.exception.EntityNotFoundException;
 import kz.pazyl.mynotebook.repository.BudgetOperationRepository;
 import kz.pazyl.mynotebook.repository.BudgetRepository;
 import kz.pazyl.mynotebook.repository.CurrencyRepository;
@@ -35,7 +35,7 @@ public class BudgetService implements IBudgetService {
     @Override
     public BudgetItem getById(Long id) {
         BudgetEntity budget = repository.findById(id)
-                .orElseThrow(() -> new ExceptionNotFound("budget not found"));
+                .orElseThrow(() -> new EntityNotFoundException(id, "budget not found"));
 
         Optional<List<BudgetOperationEntity>> budgetOperationsOptional = Optional.ofNullable(budget.getOperations());
 
@@ -61,7 +61,7 @@ public class BudgetService implements IBudgetService {
 
         // валютаны базадан тексереміз
         CurrencyEntity currency = currencyRepository.findById(request.getCurrencyId())
-                .orElseThrow(() -> new ExceptionNotFound("Валюта табылмады"));
+                .orElseThrow(() -> new EntityNotFoundException(request.getCurrencyId(), "Валюта табылмады"));
 
         BudgetEntity entity = new BudgetEntity();
 
@@ -84,10 +84,10 @@ public class BudgetService implements IBudgetService {
     @Override
     public BudgetOperationItem addOperation(Long budgetId, BudgetOperationRequestCreate request) {
         BudgetEntity budget = repository.findById(budgetId)
-                .orElseThrow(() -> new ExceptionNotFound("Budget табылмады"));
+                .orElseThrow(() -> new EntityNotFoundException(budgetId, "Budget табылмады"));
 
         CurrencyEntity currency = currencyRepository.findById(request.getCurrencyId())
-                .orElseThrow(() -> new ExceptionNotFound("Валюта табылмады"));
+                .orElseThrow(() -> new EntityNotFoundException(budgetId, "Валюта табылмады"));
 
         BudgetOperationEntity operation = new BudgetOperationEntity();
         operation.setSum(request.getSum());
