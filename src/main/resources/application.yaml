@@ -11,4 +11,4 @@ spring:
       ddl-auto: update
 server:
   servlet:
-    context-path: /my_noot_book
+    context-path: /my-noot-book
